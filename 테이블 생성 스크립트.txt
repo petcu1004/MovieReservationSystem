@@ -1,0 +1,142 @@
+--DROP TABLE reserved_seat;
+--DROP TABLE schedule;
+--DROP TABLE theater_seat;
+--DROP TABLE theater;
+--DROP TABLE movie;
+--DROP TABLE member;
+--DROP TABLE discount_rate;
+
+alter session set nls_Date_format = 'yyyy-mm-dd hh24:mi';
+
+CREATE TABLE discount_rate (
+	grade 	VARCHAR(10) 	NOT NULL ,
+   	discount_rate 	NUMBER(3) 	NOT NULL,
+       	CONSTRAINT discount_rate_PK PRIMARY KEY (grade),
+	CONSTRAINT discount_rate_CK CHECK (grade IN ('VIP', 'GOLD', 'SILVER')));
+
+CREATE TABLE member (
+	member_id 		VARCHAR(10) 	NOT NULL,
+	member_pw 		VARCHAR(64) 	NOT NULL,
+   	name 		VARCHAR(20) 	NOT NULL,
+   	phone 		VARCHAR(15) 	NOT NULL,
+   	grade 		VARCHAR(10) 	DEFAULT  'SILVER'  NOT NULL,
+   	card 		VARCHAR(30) 	NOT NULL,
+    	flag    		CHAR(1) 		NOT NULL,
+    	CONSTRAINTS booleantest_flag_CK CHECK(flag IN ('0', '1')),
+   	CONSTRAINTS member_PK PRIMARY KEY (member_id),
+       	CONSTRAINTS mem_grade_FK FOREIGN KEY(grade) REFERENCES discount_rate(grade) );
+
+CREATE TABLE movie (
+	movie_id 		VARCHAR(10)  	NOT NULL,
+	title 		VARCHAR(30) 	NOT NULL,
+	director 		VARCHAR(20) 	NOT NULL,
+	actor 		VARCHAR(20) 	NOT NULL,
+	poster  		BLOB,
+    	flag    		CHAR(1) 		NOT NULL,
+    	CONSTRAINTS booleantestmovie_flag_CK CHECK(flag IN ('0', '1')),		
+   	CONSTRAINTS movie_PK PRIMARY KEY (movie_id));
+
+CREATE TABLE theater (
+	theater_id 	VARCHAR(10) 	NOT NULL,
+	theater_type 	VARCHAR(10) 	NOT NULL,
+       	CONSTRAINT theater_PK PRIMARY KEY (theater_id),
+	CONSTRAINT theater_CK CHECK (theater_type IN ('2D', '3D', 'X-Screen')));
+
+CREATE TABLE schedule (
+       	movie_id 	       	VARCHAR(10) 	NOT NULL,
+        time 	       	DATE 	       	NOT NULL,
+       	theater_id 	VARCHAR(10) 	NOT NULL,
+       	schedule_cost 	       	VARCHAR(10) 	NOT NULL,
+   	CONSTRAINTS schedule_PK PRIMARY KEY (time, theater_id),
+       	CONSTRAINTS schedule_theater_id_FK FOREIGN KEY(theater_id) REFERENCES  theater(theater_id),
+       	CONSTRAINTS schedule_movie_id_FK FOREIGN KEY(movie_id) REFERENCES  movie(movie_id)ON DELETE CASCADE);
+
+CREATE TABLE theater_seat (
+	theater_id 	VARCHAR(10) 	NOT NULL,
+	row_num 		VARCHAR(10) 	NOT NULL,
+	column_num 		VARCHAR(10) 	NOT NULL,
+  time 	       	DATE 	       	NOT NULL,
+   	CONSTRAINTS theater_seat_PK PRIMARY KEY (theater_id, row_num, column_num, time),
+       	CONSTRAINTS theater_seat_theater_id_FK FOREIGN KEY(theater_id, time) REFERENCES  schedule(theater_id, time));
+
+CREATE TABLE reserved_seat (
+   movie_id 	   	VARCHAR(10)	NOT NULL,
+   	time 	   	DATE	   	NOT NULL,
+   	theater_id 	VARCHAR(10)	NOT NULL,
+   	row_num 	   	VARCHAR(10)	NOT NULL,
+   	column_num 	   	VARCHAR(10)	NOT NULL,
+   	member_id 	   	VARCHAR(10)	NOT NULL,
+   	reserving_date 	   	DATE	   	NOT NULL,
+   	reserved_seat_cost	   	VARCHAR(10)	NOT NULL,
+    reserved_id     VARCHAR(50) NOT NULL,        
+   	CONSTRAINTS reserved_seat_PK PRIMARY KEY (reserved_id),
+       	CONSTRAINTS reserved_seat_theater_seat_FK FOREIGN KEY(theater_id, row_num, column_num,time) REFERENCES  theater_seat(theater_id, row_num, column_num,time),
+       	CONSTRAINTS reserved_seat_movie_id_FK FOREIGN KEY(movie_id) REFERENCES  movie(movie_id));
+
+CREATE TABLE seat (
+       	seat1 	       	VARCHAR(10) 	NOT NULL,
+        seat2 	        VARCHAR(10) 	NOT NULL,
+        seat3 	        VARCHAR(10) 	NOT NULL,
+        seat4 	        VARCHAR(10) 	NOT NULL,
+        seat5 	        VARCHAR(10) 	NOT NULL,
+        seat6 	        VARCHAR(10) 	NOT NULL);
+
+Insert into seat VALUES ( 'A 1 ', 'A 2 ', 'A 3 ', 'A 4 ', 'A 5 ', 'A 6 ');
+Insert into seat VALUES ( 'B 1 ', 'B 2 ', 'B 3 ', 'B 4 ', 'B 5 ', 'B 6 ');
+Insert into seat VALUES ( 'C 1 ', 'C 2 ', 'C 3 ', 'C 4 ', 'C 5 ', 'C 6 ');
+Insert into seat VALUES ( 'D 1 ', 'D 2 ', 'D 3 ', 'D 4 ', 'D 5 ', 'D 6 ');
+Insert into seat VALUES ( 'E 1 ', 'E 2 ', 'E 3 ', 'E 4 ', 'E 5 ', 'E 6 ');
+Insert into seat VALUES ( 'F 1 ', 'F 2 ', 'F 3 ', 'F 4 ', 'F 5 ', 'F 6 ');
+Insert into seat VALUES ( 'G 1 ', 'G 2 ', 'G 3 ', 'G 4 ', 'G 5 ', 'G 6 ');
+Insert into seat VALUES ( 'H 1 ', 'H 2 ', 'H 3 ', 'H 4 ', 'H 5 ', 'H 6 ');
+Insert into seat VALUES ( 'I 1 ', 'I 2 ', 'I 3 ', 'I 4 ', 'I 5 ', 'I 6 ');
+Insert into seat VALUES ( 'J 1 ', 'J 2 ', 'J 3 ', 'J 4 ', 'J 5 ', 'J 6 ');
+
+select * from seat;
+
+CREATE TABLE seat_ (
+       	seat1 	       	VARCHAR(10) 	NOT NULL,
+        seat2 	        VARCHAR(10) 	NOT NULL,
+        seat3 	        VARCHAR(10) 	NOT NULL,
+        seat4 	        VARCHAR(10) 	NOT NULL,
+        seat5 	        VARCHAR(10) 	NOT NULL,
+        seat6 	        VARCHAR(10) 	NOT NULL);
+
+Insert into seat_ VALUES ( 'A 1 ', 'A 2 ', 'A 3 ', 'A 4 ', 'A 5 ', 'A 6 ');
+Insert into seat_ VALUES ( 'B 1 ', 'B 2 ', 'B 3 ', 'B 4 ', 'B 5 ', 'B 6 ');
+Insert into seat_ VALUES ( 'C 1 ', 'C 2 ', 'C 3 ', 'C 4 ', 'C 5 ', 'C 6 ');
+Insert into seat_ VALUES ( 'D 1 ', 'D 2 ', 'D 3 ', 'D 4 ', 'D 5 ', 'D 6 ');
+Insert into seat_ VALUES ( 'E 1 ', 'E 2 ', 'E 3 ', 'E 4 ', 'E 5 ', 'E 6 ');
+Insert into seat_ VALUES ( 'F 1 ', 'F 2 ', 'F 3 ', 'F 4 ', 'F 5 ', 'F 6 ');
+Insert into seat_ VALUES ( 'G 1 ', 'G 2 ', 'G 3 ', 'G 4 ', 'G 5 ', 'G 6 ');
+Insert into seat_ VALUES ( 'H 1 ', 'H 2 ', 'H 3 ', 'H 4 ', 'H 5 ', 'H 6 ');
+
+select * from seat_;
+
+
+INSERT INTO discount_rate  VALUES ('VIP',50 );
+INSERT INTO discount_rate  VALUES ('GOLD',30 );
+INSERT INTO discount_rate  VALUES ('SILVER',10 );
+
+SELECT * FROM discount_rate;
+
+Insert into theater VALUES ( '1관', '2D');
+Insert into theater VALUES ( '2관', '3D');
+Insert into theater VALUES ( '3관', 'X-Screen');
+
+SELECT * FROM theater;
+commit;
+
+
+
+select * from discount_rate;
+select * from member;
+select * from movie;
+select * from theater;
+select * from theater_seat;
+select * from schedule;
+select * from reserved_seat;
+select * from seat;
+select * from seat_;
+
+update member set flag='1' where member_id='admin';
